@@ -1,9 +1,8 @@
-export default function Logo({themeLight, width = "204px", height = "204px"}) {
+export default function Logo({themeLight, width = "204px"}) {
   const theme = themeLight ? "#000000" : "#ffffff";
   return (
     <svg
       width={width}
-      height={height}
       viewBox="0 0 24 24"
       id="Layer_1"
       data-name="Layer 1"

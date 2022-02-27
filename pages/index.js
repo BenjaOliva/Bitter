@@ -8,11 +8,30 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { Heading } from "@chakra-ui/react";
-import Logo from './../components/Logo';
-import { FaGithub } from 'react-icons/fa';
+import Logo from "./../components/Logo";
+import { FaGithub } from "react-icons/fa";
+import { loginWithGithub, onAuthStateChanged } from "./../firebase/client";
+import { useEffect, useState } from "react";
+import AvatarCard from "./../components/Avatar/index";
 
 export default function Home() {
   const { colorMode, toggleColorMode } = useColorMode();
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    onAuthStateChanged(user => {
+      setUser(user)
+    });
+  }, []);
+
+  const handleLoginGithub = () => {
+    loginWithGithub()
+      .then(user => {
+        console.log("User loggin: ", user);
+        setUser(user)
+      })
+      .catch((err) => console.error(err));
+  };
 
   return (
     <div className={"container"}>
@@ -29,13 +48,20 @@ export default function Home() {
             spacing={4}
             align="center"
           >
-            <Logo themeLight={colorMode === "light" ? true : false} width="100px" height="100px"/>
+            <Logo
+              themeLight={colorMode === "light" ? true : false}
+              width="100px"
+            />
             <Heading>
               Welcome to <a href="https://nextjs.org">Bitter!</a>
             </Heading>
-            <Button leftIcon={<FaGithub />}>
-              Log In with GitHub
-            </Button>
+            {user === null ? (
+              <Button leftIcon={<FaGithub />} onClick={handleLoginGithub}>
+                Log In with GitHub
+              </Button>
+            ) : (
+              <AvatarCard user={user} />
+            )}
             <Button onClick={toggleColorMode}>
               Toggle {colorMode === "light" ? "Dark" : "Light"}
             </Button>
@@ -49,7 +75,10 @@ export default function Home() {
               rel="noopener noreferrer"
             >
               Powered by{" "}
-              <Logo themeLight={colorMode === "light" ? true : false} width="50px" height="50px" />
+              <Logo
+                themeLight={colorMode === "light" ? true : false}
+                width="50px"
+              />
             </a>
           </footer>
         </Center>
